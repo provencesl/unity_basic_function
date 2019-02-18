@@ -1,0 +1,37 @@
+此处讨论UGUI， Overlay Camera 2d UI,UGUI的WorldSpace 3DUI不同
+
+我们常常会用到拖拽技能或者物品的需求，
+
+按住UI，移动鼠标拖动，跟随鼠标移动，松开时根据鼠标位置作出不同的处理。
+
+知识点：
+1）UGUI里判断鼠标是否在指定的UI范围内
+此处UI范围指的是RectTransform的范围，可在Scene场景观察大小
+
+RectReansformUtility矩阵变换工具类实现了次判断功能。
+  bool RectTransformUtility. RectangleContainsScreenPoint(RectTransform rect, Vector2 screenPoint, Camera cam)
+  
+  参数1：目标矩形【目标UI的RectTransform组件】
+  参数2：屏幕上的点二维坐标
+  参数3：观察UI和这点的相机
+  
+  现在第一个参数可以确认，直接从目标UI上RectTransform组件，那第二个参数鼠标的位置二维坐标.
+  
+2)Input.mousePosition 当前所在像素坐标的鼠标位置【屏幕坐标】、
+
+屏幕坐标：三维坐标，屏幕或窗口的左下角是坐标系的（0,0）坐标。右上角的坐标是（屏幕宽度值，屏幕高度值），z保持不变，向右x变大，向上y变大
+
+取三维坐标后，新建二维坐标，分别取三维坐标的x,y值，得到的二维坐标就是第二个参数。
+
+第三个参数便是显示UI的摄像机，然后就可以随时的知道鼠标位置是否在指定UI范围。
+
+3）让UI显示在鼠标位置
+
+前面知道Input.mousePosition是屏幕坐标，但UI位置是世界坐标，把鼠标位置转换
+  Camera.ScreenToWorldPoint(Vector3 position)
+  
+把屏幕坐标转为世界坐标(Unity官方文档)，相机为看这个UI的相机，位置参数传入鼠标屏幕坐标，得到鼠标位置在这个相机下世界坐标。
+然后把这个值赋给要移动位置的UI的transform.postion
+
+4）放下松开
+鼠标的松下松开利用Input.GetMouseButtonDown和Input.GetMouseButtonUp,
